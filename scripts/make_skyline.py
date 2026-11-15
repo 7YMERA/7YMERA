@@ -25,10 +25,14 @@ def http(url, data=None, headers=None):
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read().decode("utf-8", "replace")
 
+META = {}
+
 def from_graphql():
-    q = {"query": "query($u:String!){user(login:$u){contributionsCollection{contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}", "variables": {"u": USER}}
+    q = {"query": "query($u:String!){user(login:$u){repositories(ownerAffiliations:OWNER,privacy:PUBLIC){totalCount} contributionsCollection{contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}", "variables": {"u": USER}}
     raw = http("https://api.github.com/graphql", json.dumps(q).encode(), {"Authorization": "bearer " + TOKEN, "Content-Type": "application/json", "User-Agent": "skyline-card"})
-    weeks = json.loads(raw)["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+    user = json.loads(raw)["data"]["user"]
+    META["repos"] = user["repositories"]["totalCount"]
+    weeks = user["contributionsCollection"]["contributionCalendar"]["weeks"]
     return [[d["date"], d["contributionCount"]] for w in weeks for d in w["contributionDays"]]
 
 def from_scrape():
@@ -48,11 +52,16 @@ def from_scrape():
 
 def load():
     p = os.environ.get("SKYLINE_DATA")
-    if p: return json.load(open(p))
+    if p:
+        if os.environ.get("SKYLINE_REPOS"): META["repos"] = int(os.environ["SKYLINE_REPOS"])
+        return json.load(open(p))
     if TOKEN:
         try: return from_graphql()
         except Exception as e: print("graphql failed:", e, file=sys.stderr)
-    return from_scrape()
+    days = from_scrape()
+    try: META["repos"] = json.loads(http(f"https://api.github.com/users/{USER}", headers={"User-Agent": "skyline-card"}))["public_repos"]
+    except Exception: pass
+    return days
 
 def esc(s): return html.escape(str(s), quote=True)
 
@@ -76,8 +85,10 @@ def build(days):
     if nxt: line2 = f"Next: {nxt[0]} at {nxt[1]:g} m, {nxt[1] - metres:.0f} m to go"; prog = metres / nxt[1]
     else: line2 = "Taller than every tower in Kuala Lumpur"; prog = 1.0
     line1 = f"Past {passed[-1]}" if passed else "Still on the ground floor"
+    last30 = sum(c for d, c in last365 if d > today - timedelta(days=30))
     build.stats = {"updated": today.isoformat(), "metres": total, "line1": line1, "line2": line2, "progress": round(prog, 3),
-                   "streak": streak, "active_weeks": active, "best_day": best, "weeks": weeks}
+                   "streak": streak, "active_weeks": active, "best_day": best, "last30": last30, "repos": META.get("repos"),
+                   "towers_passed": len(passed), "towers_total": len(LANDMARKS), "weeks": weeks}
     # buildings
     W, H, base = 1000, 340, 292
     mx = max(weeks) or 1; bw, gap, x0 = 13, 3, 570
