@@ -9,7 +9,7 @@ Data sources, first one that works:
   2. GITHUB_TOKEN             GraphQL, exact numbers (this is what the Action uses)
   3. no token                 scrape of the public contribution graph
 
-Usage: GH_USERNAME=7YMERA python3 scripts/make_skyline.py     (writes skyline-card.svg at the repo root)
+Usage: GH_USERNAME=7YMERA python3 scripts/make_skyline.py     (writes skyline-card.svg and skyline.json at the repo root; the portfolio site reads the JSON)
 """
 import json, os, re, sys, urllib.request, html
 from datetime import date, datetime, timedelta, timezone
@@ -76,6 +76,8 @@ def build(days):
     if nxt: line2 = f"Next: {nxt[0]} at {nxt[1]:g} m, {nxt[1] - metres:.0f} m to go"; prog = metres / nxt[1]
     else: line2 = "Taller than every tower in Kuala Lumpur"; prog = 1.0
     line1 = f"Past {passed[-1]}" if passed else "Still on the ground floor"
+    build.stats = {"updated": today.isoformat(), "metres": total, "line1": line1, "line2": line2, "progress": round(prog, 3),
+                   "streak": streak, "active_weeks": active, "best_day": best, "weeks": weeks}
     # buildings
     W, H, base = 1000, 340, 292
     mx = max(weeks) or 1; bw, gap, x0 = 13, 3, 570
@@ -116,3 +118,5 @@ def build(days):
 if __name__ == "__main__":
     svg = build(load())
     open(OUT, "w", encoding="utf-8").write(svg); print("wrote", os.path.normpath(OUT))
+    jp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "skyline.json")
+    open(jp, "w", encoding="utf-8").write(json.dumps(build.stats, separators=(",", ":"))); print("wrote", os.path.normpath(jp))
