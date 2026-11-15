@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="banner.svg" alt="Alif Najmi. I write the spec. Then I build it." width="100%">
+  <img src="banner.svg" alt="Alif Najmi. Business Analyst and builder in Kuala Lumpur." width="100%">
 </p>
 
 <p align="center">
@@ -12,7 +12,6 @@
 
 I'm **Muhammad Alif Najmi (Alif)**, a Business Analyst at [axrail.ai](https://axrail.ai) and a Computer Science graduate of Universiti Teknologi PETRONAS, based in Kuala Lumpur. By day I turn business processes into clear requirements for data and AI solutions. After hours I build the products I specify: apps people in Malaysia actually use.
 
-> I work out what a business actually needs, write it down so nobody has to guess, and then I build it myself.
 
 ## Selected work
 
@@ -45,7 +44,7 @@ I'm **Muhammad Alif Najmi (Alif)**, a Business Analyst at [axrail.ai](https://ax
   <img src="skyline-card.svg" alt="Skyline log: a year of contributions drawn as a Kuala Lumpur skyline, one metre per contribution" width="100%">
 </p>
 
-<sub>Redrawn every day by a small GitHub Action. One contribution is one metre, and the card compares the total with Menara KL, The Exchange 106, the Petronas Towers and Merdeka PNB 118.</sub>
+<sub>Redrawn every day by a small GitHub Action. One contribution is one metre, and the card compares the total with Menara KL, The Exchange 106, the Petronas Towers and Merdeka Maybank Tower.</sub>
 
 ## Say hello
 

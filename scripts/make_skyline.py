@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta, timezone
 USER = os.environ.get("GH_USERNAME", "7YMERA")
 TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "skyline-card.svg")
-LANDMARKS = [("Menara KL", 421.0), ("The Exchange 106", 445.0), ("Petronas Towers", 452.0), ("Merdeka PNB 118", 678.9)]
+LANDMARKS = [("Menara KL", 421.0), ("The Exchange 106", 445.0), ("Petronas Towers", 452.0), ("Merdeka Maybank Tower", 678.9)]
 LEVEL_COUNT = {0: 0, 1: 1, 2: 3, 3: 6, 4: 10}  # only used by the scrape fallback when counts are hidden
 
 def http(url, data=None, headers=None):
